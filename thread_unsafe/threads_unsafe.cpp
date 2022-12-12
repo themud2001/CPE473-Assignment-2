@@ -39,12 +39,108 @@ void ReadFile(string fileName) {
     file.close();
 }
 
+void WriteFile(string fileName) {
+    ofstream file(fileName);
+
+    if (file.is_open()) {
+        file << "The output image is" << endl;
+
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                file << imageArray[i][j] << " ";
+            }
+
+            file << endl;
+        }
+    } else {
+        cout << "Cannot write to the file!" << endl;
+    }
+
+    file.close();
+}
+
 void MedianFilter(int startRow, int endRow) {
     for (int i = startRow; i < endRow; i++) {
         for (int j = 0; j < dimension; j++) {
             vector<int> temp;
 
             if (i == 0) {
+                if (j == 0) {
+                    temp.push_back(0);
+                    temp.push_back(0);
+                    temp.push_back(0);
+
+                    temp.push_back(0);
+                    temp.push_back(imageArray[i][j]);
+                    temp.push_back(imageArray[i][j + 1]);
+
+                    temp.push_back(0);
+                    temp.push_back(imageArray[i + 1][j]);
+                    temp.push_back(imageArray[i + 1][j + 1]);
+                } else if (j == imageArray[i].size() - 1) {
+                    temp.push_back(0);
+                    temp.push_back(0);
+                    temp.push_back(0);
+
+                    temp.push_back(imageArray[i][j - 1]);
+                    temp.push_back(imageArray[i][j]);
+                    temp.push_back(0);
+
+                    temp.push_back(imageArray[i + 1][j - 1]);
+                    temp.push_back(imageArray[i + 1][j]);
+                    temp.push_back(0);
+                } else {
+                    temp.push_back(0);
+                    temp.push_back(0);
+                    temp.push_back(0);
+
+                    temp.push_back(imageArray[i][j - 1]);
+                    temp.push_back(imageArray[i][j]);
+                    temp.push_back(imageArray[i][j + 1]);
+
+                    temp.push_back(imageArray[i + 1][j - 1]);
+                    temp.push_back(imageArray[i + 1][j]);
+                    temp.push_back(imageArray[i + 1][j + 1]);
+                }
+            } else if (i == imageArray.size() - 1) {
+                if (j == 0) {
+                    temp.push_back(0);
+                    temp.push_back(imageArray[i - 1][j]);
+                    temp.push_back(imageArray[i - 1][j + 1]);
+
+                    temp.push_back(0);
+                    temp.push_back(imageArray[i][j]);
+                    temp.push_back(imageArray[i][j + 1]);
+
+                    temp.push_back(0);
+                    temp.push_back(0);
+                    temp.push_back(0);
+                } else if (j == imageArray[i].size() - 1) {
+                    temp.push_back(imageArray[i - 1][j - 1]);
+                    temp.push_back(imageArray[i - 1][j]);
+                    temp.push_back(0);
+
+                    temp.push_back(imageArray[i][j - 1]);
+                    temp.push_back(imageArray[i][j]);
+                    temp.push_back(0);
+
+                    temp.push_back(0);
+                    temp.push_back(0);
+                    temp.push_back(0);
+                } else {
+                    temp.push_back(imageArray[i - 1][j - 1]);
+                    temp.push_back(imageArray[i - 1][j]);
+                    temp.push_back(imageArray[i - 1][j + 1]);
+
+                    temp.push_back(imageArray[i][j - 1]);
+                    temp.push_back(imageArray[i][j]);
+                    temp.push_back(imageArray[i][j + 1]);
+
+                    temp.push_back(0);
+                    temp.push_back(0);
+                    temp.push_back(0);
+                }
+            } else {
                 if (j == 0) {
                     temp.push_back(0);
                     temp.push_back(imageArray[i - 1][j]);
@@ -139,6 +235,8 @@ int main(int argc, char** argv) {
     for (int i = 0; i < numberOfThreads; i++) {
         pthread_join(threads[i], NULL);
     }
+
+    WriteFile("out.txt");
 
     return 0;
 }
