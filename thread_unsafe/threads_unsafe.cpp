@@ -18,6 +18,8 @@ vector<vector<int>> imageArray;
 vector<vector<int>> cloneArray;
 vector<int> rowStartEnd;
 
+int numberOfBright = 0, numberOfDark = 0, numberOfNormal = 0;
+
 void ReadFile(string fileName) {
     ifstream file(fileName);
     file >> dimension;
@@ -60,7 +62,7 @@ void WriteFile(string fileName) {
     file.close();
 }
 
-void MedianFilter(int startRow, int endRow) {
+void MedianFilter(int startRow, int endRow, int &bright, int &dark, int &normal) {
     for (int i = startRow; i < endRow; i++) {
         for (int j = 0; j < dimension; j++) {
             vector<int> temp;
@@ -182,8 +184,15 @@ void MedianFilter(int startRow, int endRow) {
             }
 
             sort(temp.begin(), temp.end());
-
             cloneArray[i][j] = temp[4];
+
+            if (cloneArray[i][j] > 200) {
+                bright++;
+            } else if (cloneArray[i][j] < 50) {
+                dark++;
+            } else {
+                normal++;
+            }
         }
     }
 }
@@ -192,9 +201,15 @@ void* Routine(void* threadID) {
     int64_t id = (int64_t)threadID;
     int startRow = rowStartEnd[id * 2];
     int endRow = rowStartEnd[id * 2 + 1];
+    int bright = 0, dark = 0, normal = 0;
 
     cout << "ThreadID=" << id << ", startRow=" << startRow << ", endRow=" << endRow << endl;
-    MedianFilter(startRow, endRow);
+    MedianFilter(startRow, endRow, bright, dark, normal);
+    cout << "ThreadID=" << id << ", numOfBright=" << bright << ", numOfDark=" << dark << ", numOfNormal=" << normal << endl;
+
+    numberOfBright += bright;
+    numberOfDark += dark;
+    numberOfNormal += normal;
 
     pthread_exit(NULL);
 }
@@ -239,6 +254,7 @@ int main(int argc, char** argv) {
         pthread_join(threads[i], NULL);
     }
 
+    cout << "Main: numOfBright=" << numberOfBright << ", numOfDark=" << numberOfDark << ", numOfNormal=" << numberOfNormal << endl;
     WriteFile("out.txt");
 
     return 0;
