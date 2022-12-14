@@ -15,6 +15,7 @@ using namespace std;
 
 int dimension;
 vector<vector<int>> imageArray;
+vector<vector<int>> cloneArray;
 vector<int> rowStartEnd;
 
 void ReadFile(string fileName) {
@@ -47,7 +48,7 @@ void WriteFile(string fileName) {
 
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
-                file << imageArray[i][j] << " ";
+                file << cloneArray[i][j] << " ";
             }
 
             file << endl;
@@ -182,7 +183,7 @@ void MedianFilter(int startRow, int endRow) {
 
             sort(temp.begin(), temp.end());
 
-            imageArray[i][j] = temp[4];
+            cloneArray[i][j] = temp[4];
         }
     }
 }
@@ -203,6 +204,8 @@ int main(int argc, char** argv) {
     pthread_t *threads = new pthread_t[numberOfThreads];
 
     ReadFile("in.txt");
+    cloneArray.resize(dimension, vector<int>());
+    copy(imageArray.begin(), imageArray.end(), cloneArray.begin());
 
     int rowsPerThread = dimension / numberOfThreads;
     int remainder = dimension % numberOfThreads;
