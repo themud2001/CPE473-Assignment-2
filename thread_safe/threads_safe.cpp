@@ -238,15 +238,20 @@ int main(int argc, char** argv) {
     cloneArray.resize(dimension, vector<int>());
     copy(imageArray.begin(), imageArray.end(), cloneArray.begin());
 
-    int rowsPerThread = dimension / numberOfThreads;
-    int remainder = dimension % numberOfThreads;
+    int rowsPerThread = 0;
+    int remainder = 0;
     int offset = 0;
 
-    for (int64_t i = 0; i < numberOfThreads; i++) {
-        /*
-            TODO: Implement it where the number of rows are less than the number of threads
-        */
+    if (dimension >= numberOfThreads) {
+        rowsPerThread = dimension / numberOfThreads;
+        remainder = dimension % numberOfThreads;
+        offset = 0;
+    } else {
+        rowsPerThread = 1;
+        numberOfThreads = dimension;
+    }
 
+    for (int64_t i = 0; i < numberOfThreads; i++) {
         int startRow = i * rowsPerThread + offset;
         int endRow = startRow + rowsPerThread;
 
