@@ -67,7 +67,19 @@ void MedianFilter(int startRow, int endRow, int &bright, int &dark, int &normal)
         for (int j = 0; j < dimension; j++) {
             vector<int> temp;
 
-            if (i == 0) {
+            if (dimension == 1) {
+                temp.push_back(0);
+                temp.push_back(0);
+                temp.push_back(0);
+
+                temp.push_back(0);
+                temp.push_back(imageArray[i][j]);
+                temp.push_back(0);
+
+                temp.push_back(0);
+                temp.push_back(0);
+                temp.push_back(0);
+            } else if (i == 0) {
                 if (j == 0) {
                     temp.push_back(0);
                     temp.push_back(0);
