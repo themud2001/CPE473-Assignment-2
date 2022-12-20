@@ -2,6 +2,7 @@
     Assignment #2: Threading
 
     Moath Zayadneh - 136559
+    Mohammad Abo-alrob - 126529
 */
 
 #include <iostream>
